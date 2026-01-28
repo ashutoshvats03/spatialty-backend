@@ -919,10 +919,8 @@ class CalculationView(APIView):
             cache.delete('calculated_data')  # Clear existing cache for demonstration
             print("Data recalculated and cached successfully.")
             data = do_heavy_calculation()
-            data = {"key": "value"} 
             cache.set('calculated_data', data, timeout=None)  
         else:
-            data = {"key": "value"} 
             cache.set('calculated_data', data, timeout=3600)
 
         return Response({"status": "Data calculated and cached"}, status=status.HTTP_200_OK)

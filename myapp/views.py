@@ -921,6 +921,7 @@ class CalculationView(APIView):
             data = do_heavy_calculation()
             cache.set('calculated_data', data, timeout=None)  
         else:
+            data = do_heavy_calculation()
             cache.set('calculated_data', data, timeout=3600)
 
         return Response({"status": "Data calculated and cached"}, status=status.HTTP_200_OK)

@@ -1,0 +1,16 @@
+Django==5.1.4
+pandas
+dotenv
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
+django-cors-headers==4.0.0
+pandas
+django-ratelimit==4.1.0
+psycopg2-binary==2.9.8
+django_redis
+gunicorn
+dj-database-url 
+upstash-redis
+
+
+

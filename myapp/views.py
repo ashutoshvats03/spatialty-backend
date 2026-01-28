@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+
+from django.conf import settings
 from .permission import HasRole
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from .serializers import RegisterSerializer, UserSerializer, LoginSerializer
@@ -55,13 +57,9 @@ def do_heavy_calculation():
 
         BASE_DIR = Path(__file__).resolve().parent.parent
 
-        MEDIA_URL = '/media/'
-        MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+        csv_folder = os.path.join(settings.MEDIA_ROOT, "csv")
+        csv_file_path_RHS = os.path.join(csv_folder, "RHS_Delhi-NCR_data.csv")
 
-        # RHS CSV
-        csv_file_path_RHS = os.path.abspath(
-            os.path.join(MEDIA_ROOT, "csv", "RHS_Delhi-NCR_data.csv")
-        )
         df = pd.read_csv(csv_file_path_RHS)
         # print(df.columns.tolist())  
 
@@ -104,11 +102,9 @@ def do_heavy_calculation():
         RHSedgecrack = results["Edge crack(%)"]
         RHSrutting = results["Rutting(%)"]
 
-
-        # LHS CSV
-        csv_file_path_LHS = os.path.abspath(
-            os.path.join(BASE_DIR, "..","backend", "media", "csv", "LHS_Delhi-NCR_data.csv")
-        )
+        csv_folder = os.path.join(settings.MEDIA_ROOT, "csv")
+        csv_file_path_LHS = os.path.join(csv_folder, "LHS_Delhi-NCR_data.csv")
+        
         df = pd.read_csv(csv_file_path_LHS)
         # print(df.columns.tolist())  # Check actual column names
 
@@ -153,9 +149,7 @@ def do_heavy_calculation():
 
 
         # Plantation CSV
-        csv_file_path_plantation = os.path.abspath(
-            os.path.join(BASE_DIR, "..","backend", "media", "csv", "plantation.csv")
-        )
+        csv_file_path_plantation = os.path.join(csv_folder, "plantation.csv")
         df = pd.read_csv(csv_file_path_plantation)
         # print(df.columns.tolist())  # Check actual column names
 
@@ -172,9 +166,7 @@ def do_heavy_calculation():
 
 
         # Street Light CSV
-        csv_file_path_street_light = os.path.abspath(
-            os.path.join(BASE_DIR, "..","backend", "media", "csv", "Street_light.csv")
-        )
+        csv_file_path_street_light = os.path.join(csv_folder, "Street_light.csv")
         df = pd.read_csv(csv_file_path_street_light)
 
         # Define the columns we want to work with
@@ -227,9 +219,7 @@ def do_heavy_calculation():
 
 
         # Road Furniture CSV
-        csv_file_path_furniture = os.path.abspath(
-            os.path.join(BASE_DIR, "..","backend", "media", "csv", "LHS_Road furniture.csv")
-        )
+        csv_file_path_furniture = os.path.join(csv_folder, "LHS_Road_furniture.csv")
 
         # Read the CSV
         df = pd.read_csv(csv_file_path_furniture)
@@ -918,10 +908,23 @@ class RegisterView(generics.CreateAPIView):
 
 class CalculationView(APIView):
     def get(self, request):
-        cache.delete('calculated_data')
-        print("Data not found in cache, calculating...")
-        data = do_heavy_calculation()
-        cache.set('calculated_data', data, timeout=None)  # or timeout=3600
+        # cache.delete('calculated_data')
+        # print("Data not found in cache, calculating...")
+        # data = do_heavy_calculation()
+        # cache.set('calculated_data', data, timeout=None)  # or timeout=3600
+
+
+        data = cache.get('calculated_data')
+        if data:
+            cache.delete('calculated_data')  # Clear existing cache for demonstration
+            print("Data recalculated and cached successfully.")
+            data = do_heavy_calculation()
+            data = {"key": "value"} 
+            cache.set('calculated_data', data, timeout=None)  
+        else:
+            data = {"key": "value"} 
+            cache.set('calculated_data', data, timeout=3600)
+
         return Response({"status": "Data calculated and cached"}, status=status.HTTP_200_OK)
 
 class LoginView(APIView):

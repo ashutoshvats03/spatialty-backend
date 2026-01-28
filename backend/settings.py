@@ -120,15 +120,17 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
+# settings.py
+print(f"DEBUG: Connecting as user: {os.getenv('DB_USER')}")
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
+        'NAME': os.getenv('DB_NAME', 'postgres'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+        'PORT': os.getenv('DB_PORT', '6543'),
     }
 }
 

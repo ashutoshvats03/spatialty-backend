@@ -38,6 +38,7 @@ from .serializers import UserSerializer
 import os
 from dotenv import load_dotenv
 from upstash_redis import Redis
+import json
 cache = Redis.from_env()
 
 load_dotenv()

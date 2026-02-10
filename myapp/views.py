@@ -913,14 +913,13 @@ class CalculationView(APIView):
         # data = do_heavy_calculation()
         # cache.set('calculated_data', data, timeout=None)  # or timeout=3600
 
-
-        data = cache.get('calculated_data')
-        if data:
+        if cache.exists('calculated_data'):
             cache.delete('calculated_data')  # Clear existing cache for demonstration
             print("Data recalculated and cached successfully.")
             data = do_heavy_calculation()
             cache.set('calculated_data', data, timeout=None)  
         else:
+            print("Data cached")
             data = do_heavy_calculation()
             cache.set('calculated_data', data, timeout=3600)
 

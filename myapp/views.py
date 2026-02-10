@@ -917,13 +917,10 @@ class CalculationView(APIView):
 
         if cache.exists('calculated_data'):
             cache.delete('calculated_data')  # Clear existing cache for demonstration
-            print("Data recalculated and cached successfully.")
-            data = do_heavy_calculation()
-            cache.set('calculated_data', data)  
-        else:
-            print("Data cached")
-            data = do_heavy_calculation()
-            cache.set('calculated_data', data)
+            print("Data recalculated and cached successfully.") 
+
+        data = do_heavy_calculation()
+        cache.set('calculated_data', json.dumps(data))
 
         return Response({"status": "Data calculated and cached"}, status=status.HTTP_200_OK)
 
@@ -940,8 +937,10 @@ class LoginView(APIView):
                 refresh = RefreshToken.for_user(user)
                 user_serializer = UserSerializer(user)
 
-                heavy_data = cache.get('calculated_data')
-
+                heavy_data_raw = cache.get('calculated_data')
+                heavy_data = None
+                if heavy_data_raw:
+                    heavy_data = json.loads(heavy_data_raw)
                 return Response({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token),

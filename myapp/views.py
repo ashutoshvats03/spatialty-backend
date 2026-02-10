@@ -25,7 +25,6 @@ from django.db.models import F
 from myapp.models import Role, UserRole , User
 from django.contrib.auth.hashers import check_password
 from rest_framework import status
-from django.core.cache import cache
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
@@ -38,6 +37,9 @@ from .serializers import UserSerializer
 
 import os
 from dotenv import load_dotenv
+from upstash_redis import Redis
+cache = Redis.from_env()
+
 load_dotenv()
 HOST = os.getenv("HOST") 
 
@@ -921,7 +923,7 @@ class CalculationView(APIView):
         else:
             print("Data cached")
             data = do_heavy_calculation()
-            cache.set('calculated_data', data, timeout=3600)
+            cache.set('calculated_data', data, timeout=None)
 
         return Response({"status": "Data calculated and cached"}, status=status.HTTP_200_OK)
 

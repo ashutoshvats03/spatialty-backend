@@ -36,12 +36,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # or os.path.join(BASE_DIR, "static")
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",  # or os.path.join(BASE_DIR, "static")
+# ]
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# Optional: Add this to handle compression and caching
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage
 
 
 
@@ -68,6 +71,7 @@ MIDDLEWARE = [
     'django_ratelimit.middleware.RatelimitMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # <--- ADD THIS RIGHT HERE
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

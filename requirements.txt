@@ -25,3 +25,4 @@ asgiref==3.8.1
 django_ratelimit==4.1.0
 
 upstash-redis
+whitenoise
